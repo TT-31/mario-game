@@ -1,0 +1,25 @@
+# Maven build output
+target/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# 本地临时验证脚本（非项目内容）
+_server.ps1
+_check.ps1
+_check.js
