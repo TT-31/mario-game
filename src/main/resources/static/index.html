@@ -1314,40 +1314,57 @@ function drawParticle(p) {
   }
 }
 
+function strokeText(text, x, y, color) {
+  const prev = ctx.fillStyle;
+  ctx.fillStyle = '#000';
+  ctx.fillText(text, x - 1, y);
+  ctx.fillText(text, x + 1, y);
+  ctx.fillText(text, x, y - 1);
+  ctx.fillText(text, x, y + 1);
+  ctx.fillStyle = color;
+  ctx.fillText(text, x, y);
+  ctx.fillStyle = prev;
+}
+
 function drawHUD() {
+  // HUD 背景条
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.fillRect(0, 0, VIEW_W, 56);
+
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 16px "Courier New", monospace';
   ctx.textAlign = 'left';
-  ctx.fillText('MARIO', 20, 26);
-  ctx.fillText(String(Game.score).padStart(6, '0'), 20, 44);
+  strokeText('MARIO', 20, 26, '#fff');
+  strokeText(String(Game.score).padStart(6, '0'), 20, 44, '#fff');
 
   // 金币
   ctx.fillStyle = '#ffe066';
-  ctx.fillRect(200, 20, 12, 16);
+  ctx.fillRect(200, 18, 14, 18);
   ctx.fillStyle = '#c87000';
-  ctx.fillRect(203, 22, 3, 12);
+  ctx.fillRect(204, 20, 3, 14);
+  ctx.fillStyle = '#ffe066';
+  ctx.fillRect(208, 20, 2, 14);
   ctx.fillStyle = '#fff';
-  ctx.fillText('× ' + String(Game.coins).padStart(2, '0'), 218, 34);
+  strokeText('× ' + String(Game.coins).padStart(2, '0'), 222, 34, '#fff');
 
   // 世界
   ctx.textAlign = 'center';
-  ctx.fillText('WORLD', 400, 26);
-  ctx.fillText(Game.levelName, 400, 44);
+  strokeText('WORLD', 400, 26, '#fff');
+  strokeText(Game.levelName, 400, 44, '#ffe066');
 
   // 时间
   ctx.textAlign = 'right';
-  ctx.fillText('TIME', VIEW_W - 80, 26);
-  ctx.fillText(String(Math.ceil(Game.time)).padStart(3, '0'), VIEW_W - 80, 44);
+  strokeText('TIME', VIEW_W - 80, 26, '#fff');
+  strokeText(String(Math.ceil(Game.time)).padStart(3, '0'), VIEW_W - 80, 44, '#fff');
 
   // 生命
   ctx.textAlign = 'right';
-  ctx.fillText('♥ × ' + Game.lives, VIEW_W - 20, 34);
+  strokeText('♥ × ' + Game.lives, VIEW_W - 20, 34, '#ff6b6b');
 
   if (Game.messageTimer > 0) {
     ctx.textAlign = 'center';
     ctx.font = 'bold 28px "Courier New", monospace';
-    ctx.fillStyle = '#ffe066';
-    ctx.fillText(Game.message, VIEW_W / 2, VIEW_H / 2);
+    strokeText(Game.message, VIEW_W / 2, VIEW_H / 2, '#ffe066');
     ctx.font = 'bold 16px "Courier New", monospace';
   }
 }
@@ -1355,50 +1372,69 @@ function drawHUD() {
 function drawStartScreen() {
   ctx.fillStyle = 'rgba(0,0,0,0.6)';
   ctx.fillRect(0, 0, VIEW_W, VIEW_H);
-  ctx.fillStyle = '#ffe066';
-  ctx.font = 'bold 40px "Courier New", monospace';
+
+  // 装饰边框
+  ctx.strokeStyle = '#ffe066';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(24, 24, VIEW_W - 48, VIEW_H - 48);
+  ctx.strokeStyle = '#e52521';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(30, 30, VIEW_W - 60, VIEW_H - 60);
+
   ctx.textAlign = 'center';
-  ctx.fillText('超级像素冒险', VIEW_W/2, 160);
+  ctx.font = 'bold 42px "Courier New", monospace';
+  strokeText('超级像素冒险', VIEW_W/2, 150, '#ffe066');
+  ctx.font = '16px "Courier New", monospace';
+  strokeText('SUPER PIXEL ADVENTURE', VIEW_W/2, 178, '#ff9f43');
+
+  // 小马里奥像素预览
+  const px = VIEW_W/2 - 12, py = 200;
+  ctx.fillStyle = '#e52521'; ctx.fillRect(px, py, 24, 8);
+  ctx.fillStyle = '#f8c890'; ctx.fillRect(px+2, py+8, 20, 8);
+  ctx.fillStyle = '#000'; ctx.fillRect(px+6, py+10, 2, 2); ctx.fillRect(px+16, py+10, 2, 2);
+  ctx.fillStyle = '#1565c0'; ctx.fillRect(px, py+16, 24, 12);
+  ctx.fillStyle = '#8b4513'; ctx.fillRect(px, py+28, 10, 8); ctx.fillRect(px+14, py+28, 10, 8);
+
   ctx.fillStyle = '#fff';
-  ctx.font = '18px "Courier New", monospace';
-  ctx.fillText('← → 移动    Z / 空格 跳跃    X 火球', VIEW_W/2, 240);
-  ctx.fillText('踩敌人 · 顶砖块 · 吃道具 · 到达旗杆', VIEW_W/2, 270);
-  ctx.fillText('P 或 Esc 暂停    R 重开', VIEW_W/2, 300);
-  ctx.fillStyle = '#ffe066';
+  ctx.font = '17px "Courier New", monospace';
+  strokeText('← → 移动    Z / 空格 跳跃    X 火球', VIEW_W/2, 268, '#fff');
+  strokeText('踩敌人 · 顶砖块 · 吃道具 · 到达旗杆', VIEW_W/2, 296, '#fff');
+  strokeText('P 或 Esc 暂停    R 重开', VIEW_W/2, 324, '#aaa');
+
   ctx.font = 'bold 22px "Courier New", monospace';
   const blink = Math.floor(Date.now() / 500) % 2;
-  if (blink) ctx.fillText('按 空格 / 回车 开始', VIEW_W/2, 380);
+  if (blink) strokeText('按 空格 / 回车 开始', VIEW_W/2, 390, '#ffe066');
 }
 
 function drawOverlay(title, sub) {
   ctx.fillStyle = 'rgba(0,0,0,0.65)';
   ctx.fillRect(0, 0, VIEW_W, VIEW_H);
-  ctx.fillStyle = '#ffe066';
-  ctx.font = 'bold 44px "Courier New", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText(title, VIEW_W/2, VIEW_H/2 - 10);
-  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 44px "Courier New", monospace';
+  strokeText(title, VIEW_W/2, VIEW_H/2 - 10, '#ffe066');
   ctx.font = '18px "Courier New", monospace';
-  ctx.fillText(sub, VIEW_W/2, VIEW_H/2 + 30);
+  strokeText(sub, VIEW_W/2, VIEW_H/2 + 30, '#fff');
 }
 
 function drawWinScreen() {
   ctx.fillStyle = 'rgba(0,0,0,0.7)';
   ctx.fillRect(0, 0, VIEW_W, VIEW_H);
-  ctx.fillStyle = '#ffe066';
-  ctx.font = 'bold 40px "Courier New", monospace';
+
+  // 闪烁星星
+  const tw = Math.floor(Date.now() / 200) % 2;
   ctx.textAlign = 'center';
-  ctx.fillText('★ 通关！ ★', VIEW_W/2, 150);
-  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 40px "Courier New", monospace';
+  const stars = tw ? '★ ★ ★' : '☆ ☆ ☆';
+  strokeText(stars, VIEW_W/2, 120, '#ffe066');
+  strokeText('通关！', VIEW_W/2, 170, '#ffe066');
   ctx.font = '20px "Courier New", monospace';
-  ctx.fillText('得分: ' + Game.score, VIEW_W/2, 220);
-  ctx.fillText('剩余时间: ' + Math.ceil(Game.time) + ' 秒', VIEW_W/2, 250);
-  ctx.fillText('用时: ' + (Game.elapsed / 1000).toFixed(1) + ' 秒', VIEW_W/2, 280);
-  ctx.fillText('金币: ' + Game.coins + '    生命: ' + Game.lives, VIEW_W/2, 310);
-  ctx.fillStyle = '#ffe066';
+  strokeText('得分: ' + Game.score, VIEW_W/2, 230, '#fff');
+  strokeText('剩余时间: ' + Math.ceil(Game.time) + ' 秒', VIEW_W/2, 260, '#fff');
+  strokeText('用时: ' + (Game.elapsed / 1000).toFixed(1) + ' 秒', VIEW_W/2, 290, '#fff');
+  strokeText('金币: ' + Game.coins + '    生命: ' + Game.lives, VIEW_W/2, 320, '#fff');
   ctx.font = 'bold 20px "Courier New", monospace';
   const blink = Math.floor(Date.now() / 500) % 2;
-  if (blink) ctx.fillText('按 R 重新挑战', VIEW_W/2, 380);
+  if (blink) strokeText('按 R 重新挑战', VIEW_W/2, 390, '#ffe066');
 }
 
 /* ---------- 固定时间步主循环 ---------- */
